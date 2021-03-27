@@ -1,0 +1,241 @@
+swagger: "2.0"
+info:
+  description: "trace demo"
+  version: "1.0.0"
+  title: "trace demo"
+  termsOfService: "http://swagger.io/terms/"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "sws.swagger.io"
+basePath: "/api"
+tags:
+  - name: "trace demo"
+    description: "trace demo"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /trades:
+    post:
+      tags:
+        - "交易服务"
+      summary: "新建交易"
+      description: "新建交易"
+      operationId: "createTrade"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "vo"
+          description: "交易信息"
+          required: true
+          schema:
+            $ref: "#/definitions/TradeVo"
+      responses:
+        201:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/ResponseResultVo"
+        401:
+          description: "Unauthorized"
+        403:
+          description: "Forbidden"
+        404:
+          description: "Not found"
+  /trades/{tradeId}:
+    put:
+      tags:
+        - "交易服务"
+      summary: "更新交易"
+      description: "更新交易"
+      operationId: "updateTrade"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: tradeId
+          in: path
+          description: "交易号"
+          required: true
+          type: integer
+          format: int64
+          example : 1
+        - in: "body"
+          name: "vo"
+          description: "交易信息"
+          required: true
+          schema:
+            $ref: "#/definitions/TradeVo"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/ResponseResultVo"
+        401:
+          description: "Unauthorized"
+        403:
+          description: "Forbidden"
+        404:
+          description: "Not found"
+    delete:
+      tags:
+        - "交易服务"
+      summary: "取消交易"
+      description: "取消交易"
+      operationId: "cancelTrade"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: tradeId
+          in: path
+          description: "交易号"
+          required: true
+          type: integer
+          format: int64
+          example : 1
+        - in: "body"
+          name: "vo"
+          description: "交易信息"
+          required: true
+          schema:
+            $ref: "#/definitions/TradeVo"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/ResponseResultVo"
+        204:
+          description: "No content"
+        401:
+          description: "Unauthorized"
+        403:
+          description: "Forbidden"
+        404:
+          description: "Not found"
+  /positions:
+    get:
+      tags:
+        - "仓位服务"
+      summary: "仓位查询"
+      description: "仓位查询"
+      operationId: "queryPosition"
+      produces:
+        - "application/json"
+      parameters:
+        - name: securityCode
+          in: query
+          description: "交易代码"
+          type: string
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/ResponseResultVo"
+        401:
+          description: "Unauthorized"
+        403:
+          description: "Forbidden"
+        404:
+          description: "Not found"
+definitions:
+  TradeVo:
+    type: object
+    required:
+      - tradeId
+      - version
+      - securityCode
+      - quantity
+      - tradeDirection
+    properties:
+      tradeId:
+        type: integer
+        format: int64
+        description: "交易号，生产环境需先从发号器申请"
+        example : 1
+      version:
+        type: integer
+        format: int32
+        description: "版本号"
+        example : 1
+      securityCode:
+        type: string
+        description: "交易代码"
+        pattern: "[-_a-zA-Z0-9]{1,50}"
+      quantity:
+        type: integer
+        format: int32
+        description: "数量"
+        example : 1
+      tradeDirection:
+        type: string
+        enum:
+          - "BUY"
+          - "SELL"
+        description: "交易方向"
+    title: TradeVo
+    description: "交易信息"
+  PositionVo:
+    type: object
+    required:
+      - securityCode
+      - quantity
+    properties:
+      securityCode:
+        type: string
+        description: "交易代码"
+        pattern: "[-_a-zA-Z0-9]{1,50}"
+      quantity:
+        type: integer
+        format: int32
+        description: "数量"
+        example : 1
+    title: PositionVo
+    description: "仓位"
+  ResponseResultVo:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      result:
+        type: object
+      pageVo:
+        $ref: "#/definitions/PageVo"
+      description: "返回信息"
+  PageVo:
+    type: object
+    properties:
+      curPage:
+        type: integer
+        format: int32
+        example : 1
+      pageSize:
+        type: integer
+        format: int32
+        example : 1
+      startIndex:
+        type: integer
+        format: int32
+        example : 1
+      endIndex:
+        type: integer
+        format: int32
+        example : 1
+      totalRow:
+        type: integer
+        format: int32
+        example : 1
+      totalPage:
+        type: integer
+        format: int32
+        example : 1
+    description: "分页信息"

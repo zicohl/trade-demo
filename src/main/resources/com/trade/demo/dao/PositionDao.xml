@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.trade.demo.dao.PositionDao">
+    <resultMap id="position" type="com.trade.demo.po.PositionPo">
+        <id property="securityCode" column="security_code" />
+        <result property="quantity" column="quantity" />
+    </resultMap>
+
+    <insert id="insertPosition">
+        insert into position (security_code, quantity)
+        values(#{po.securityCode},#{po.quantity})
+    </insert>
+
+    <select id="findPositionByCode" resultMap="position">
+        select security_code,quantity from position  where security_code = #{securityCode} for update
+    </select>
+
+    <update id="updatePosition">
+        update position set quantity = #{po.quantity} where security_code = #{po.securityCode}
+    </update>
+
+    <select id="findPosition" resultMap="position">
+        select security_code,quantity from position
+        <where>
+            <if test="securityCode != null and securityCode != ''">
+                security_code = #{securityCode}
+            </if>
+        </where>
+    </select>
+</mapper>
