@@ -23,3 +23,5 @@ src/main/java/com/trade/demo/api/
 ### NetBeans ###
 /dist/
 build/
+
+.DS_Store
