@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationConfig {
 
-    // @Bean
+    @Bean
     public FilterRegistrationBean<ResponseXssFilter> responseXssFilterFilterRegistration() {
         FilterRegistrationBean<ResponseXssFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(getResponseXssFilter());
@@ -20,6 +20,6 @@ public class ApplicationConfig {
     }
 
     private ResponseXssFilter getResponseXssFilter() {
-        return new ResponseXssFilter("/api", "");
+        return new ResponseXssFilter("/trade", "*.html,/webjars/*,/swagger-resourece,/v2/api-docs,/h2-console*");
     }
 }

@@ -2,6 +2,7 @@ package com.trade.demo.filter;
 
 import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
+import com.trade.demo.util.SafeRequestUri;
 import org.springframework.util.PatternMatchUtils;
 
 import javax.servlet.Filter;
@@ -50,7 +51,7 @@ public abstract class ExclusionSupportFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         String requestUri = httpRequest.getRequestURI();
-        //requestUri = getSafeUri归一化
+        requestUri = SafeRequestUri.getSaftRequestUri(requestUri);
         if (isExclusion(requestUri)) {
             chain.doFilter(httpRequest, httpResponse);
         } else {
