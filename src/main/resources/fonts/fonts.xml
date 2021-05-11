@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+ <bean id="myFontFamily" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
+   <property name="name" value="Arial Unicode MS"/>
+   <property name="normal" value="fonts/ARIALUNI.TTF"/>
+   <property name="pdfEncoding" value="Identity-H"/>
+   <property name="pdfEmbedded" value="true"/>
+ </bean>
+</beans>

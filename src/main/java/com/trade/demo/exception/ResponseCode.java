@@ -4,7 +4,8 @@ public enum ResponseCode {
     INTERNAL_ERROR("errorcode.internalError","Internal error"),
     TRADE_EXIST_ERROR("errorcode.tradeExistError",""),
     TRADE_VERSION_ERROR("errorcode.tradeVersionError",""),
-    TRADE_STATUS_ERROR("errorcode.tradeStatusError","");
+    TRADE_STATUS_ERROR("errorcode.tradeStatusError",""),
+    REPORT_COMPILE_ERROR("errorcode.compileReportTemplateError","");
 
     private String code;
     private String message;
