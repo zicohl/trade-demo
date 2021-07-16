@@ -10,7 +10,7 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication
+@SpringBootApplication(proxyBeanMethods = false)
 @MapperScan("com.trade.demo.dao")
 public class TradeApplication {
 

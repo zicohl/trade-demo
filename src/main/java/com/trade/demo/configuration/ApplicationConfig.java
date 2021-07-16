@@ -20,6 +20,6 @@ public class ApplicationConfig {
     }
 
     private ResponseXssFilter getResponseXssFilter() {
-        return new ResponseXssFilter("/trade", "*.html,/webjars/*,/swagger-resourece,/v2/api-docs,/h2-console*");
+        return new ResponseXssFilter("/trade", "*.html,/webjars/*,/swagger-resourece,/v2/api-docs,/h2-console*,/reports");
     }
 }
