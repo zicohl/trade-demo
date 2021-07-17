@@ -22,7 +22,7 @@ public class WorkflowController {
     @Autowired
     private WorkflowService workflowService;
 
-    @PostMapping("/submit")
+    @PostMapping("/start")
     public void submit(@RequestBody ArticleBo article) {
         workflowService.startTaskService(article);
     }
@@ -32,7 +32,7 @@ public class WorkflowController {
         return workflowService.getTasks(assignee);
     }
 
-    @PostMapping("/submit")
+    @PostMapping("/review")
     public void review(@RequestBody ApprovalBo approval) {
         workflowService.submitReview(approval);
     }
