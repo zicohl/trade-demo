@@ -15,8 +15,9 @@ import lombok.ToString;
 public class DistrictPo {
     private Long id;
     private Long parentId;
-    private String code;
     private String name;
     private String nameZh;
+    private String code;
+    private String codePath;
     private int orderNmuber;
 }

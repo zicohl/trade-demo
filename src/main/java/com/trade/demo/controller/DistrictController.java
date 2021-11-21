@@ -5,6 +5,7 @@ import com.trade.demo.exception.ResponseCode;
 import com.trade.demo.po.PositionPo;
 import com.trade.demo.service.DistrictService;
 import com.trade.demo.service.PositionService;
+import com.trade.demo.vo.DistrictVo;
 import com.trade.demo.vo.ResponseResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,14 +53,12 @@ public class DistrictController {
     @RequestMapping(value = "/districts",
             produces = {"application/json;charset=UTF-8"},
             method = RequestMethod.GET)
-    public ResponseEntity<ResponseResultVo<List<Area1>>> queryDistrict(@ApiParam(value = "地区代码") @RequestParam(value = "district_code", required = false) String securityCode) {
-        districtService.queryPosition("100000");
-        //List<Area1> list1 = getSourceList();
-        //conpareArea(list1);
+    public ResponseEntity<ResponseResultVo<DistrictVo>> queryDistrict(@ApiParam(value = "地区代码") @RequestParam(value = "district_code", required = false) String securityCode) {
+        DistrictVo district =  districtService.getPositionTree("100000");
 
-        ResponseResultVo<List<Area1>> result = new ResponseResultVo<>();
+        ResponseResultVo<DistrictVo> result = new ResponseResultVo<>();
         result.setStatus("success");
-        // result.setData(list1);
+        result.setData(district);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(result);
     }

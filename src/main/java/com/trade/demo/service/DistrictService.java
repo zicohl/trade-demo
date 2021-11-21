@@ -22,55 +22,24 @@ public class DistrictService {
     @Autowired
     private DistrictMapper districtMapper;
 
-    public List<DistrictPo> queryPosition(String code) {
+    public DistrictVo getPositionTree(String code) {
         List<DistrictPo> list = districtDao.findAllDistrict();
         DistrictVo root = districtMapper.po2Vo(list.get(0));
-        root.setCodePath(root.getCode());
         for (DistrictPo districtPo : list) {
             if (districtPo.getCode().equals(code)) {
                 continue;
             }
             fillDistrict(districtMapper.po2Vo(districtPo), root);
         }
-/*
-        for (DistrictPo districtPo : list) {
-            if (districtPo.getCode().equals(code)) {
-                continue;
-            }
-            if (!findDistrit(root,districtPo)) {
-                log.info("{} {}", districtPo.getCode(), districtPo.getNameZh());
-            }
-        }*/
 
-        for (DistrictPo districtPo : list) {
-            //log.info("{} {}", districtPo.getCode(), districtPo.getNameZh());
-        }
-        return list;
+        return root;
     }
-
-    private boolean findDistrit(DistrictVo root, DistrictPo districtPo) {
-        if (root.getCode().equals(districtPo.getCode())) {
-            return true;
-        }
-        if (CollectionUtils.isNotEmpty(root.getChildren())) {
-            for (DistrictVo districtVo:root.getChildren()) {
-                if (findDistrit(districtVo,districtPo)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
 
     private void fillDistrict(DistrictVo district, DistrictVo root) {
         if (district.getParentId().equals(root.getId())) {
             if (root.getChildren() == null) {
                 root.setChildren(new ArrayList<>());
             }
-            district.setCodePath(root.getCodePath() + "." + district.getCode());
-            district.setName(district.getName().substring(0,1).toUpperCase(Locale.ROOT)+district.getName().substring(1));
             root.getChildren().add(district);
             logSql(district);
         } else {
@@ -84,7 +53,7 @@ public class DistrictService {
 
     private void logSql(DistrictVo district) {
         log.info("insert into `district` (`id`, `parent_id`, `name`, `name_zh`, `code`, `code_path`, `order_number`) " +
-                "values({},{},{},{},{},{},{});", district.getId(),district.getParentId(),district.getName(), district.getNameZh(),
+                "values({},{},'{}','{}','{}','{}',{});", district.getId(),district.getParentId(),district.getName(), district.getNameZh(),
                 district.getCode(),district.getCodePath(),district.getOrderNmuber());
     }
 

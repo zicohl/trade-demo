@@ -17,10 +17,10 @@ import java.util.List;
 public class DistrictVo {
     private Long id;
     private Long parentId;
-    private String code;
     private String name;
     private String nameZh;
-    private int orderNmuber;
+    private String code;
     private String codePath;
+    private int orderNmuber;
     List<DistrictVo> children;
 }
