@@ -2,10 +2,13 @@ package com.trade.demo.controller;
 
 import com.trade.demo.exception.BusinessException;
 import com.trade.demo.exception.ResponseCode;
+import com.trade.demo.po.DistrictPo;
 import com.trade.demo.po.PositionPo;
 import com.trade.demo.service.DistrictService;
 import com.trade.demo.service.PositionService;
 import com.trade.demo.vo.DistrictVo;
+import com.trade.demo.vo.PageVo;
+import com.trade.demo.vo.Pager;
 import com.trade.demo.vo.ResponseResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +47,26 @@ public class DistrictController {
     @Autowired
     private DistrictService districtService;
 
-    @ApiOperation(value = "行政区域服务", nickname = "queryDistrict", notes = "行政区域树查询", tags = {"行政区域服务",})
+    @ApiOperation(value = "获取行政区域树", nickname = "queryDistrictTree", notes = "获取行政区域列表", tags = {"行政区域服务",})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Not found")})
+    @RequestMapping(value = "/districts/tree",
+            produces = {"application/json;charset=UTF-8"},
+            method = RequestMethod.GET)
+    public ResponseEntity<ResponseResultVo<DistrictVo>> queryDistrictTree(@ApiParam(value = "地区代码") @RequestParam(value = "districtCode", required = false) String districtCode) {
+        DistrictVo district = districtService.getPositionTree(districtCode);
+
+        ResponseResultVo<DistrictVo> result = new ResponseResultVo<>();
+        result.setStatus("success");
+        result.setData(district);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(result);
+    }
+
+    @ApiOperation(value = "获取行政区域列表", nickname = "queryDistrict", notes = "获取行政区域列表", tags = {"行政区域服务",})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -53,12 +75,18 @@ public class DistrictController {
     @RequestMapping(value = "/districts",
             produces = {"application/json;charset=UTF-8"},
             method = RequestMethod.GET)
-    public ResponseEntity<ResponseResultVo<DistrictVo>> queryDistrict(@ApiParam(value = "地区代码") @RequestParam(value = "district_code", required = false) String securityCode) {
-        DistrictVo district =  districtService.getPositionTree("100000");
+    public ResponseEntity<ResponseResultVo<List<DistrictPo>>> queryDistrict(
+            @ApiParam(value = "page number") @RequestParam(value = "pageNumber", required = true) int pageNumber,
+            @ApiParam(value = "page size") @RequestParam(value = "pageSize", required = true) int pageSize) {
+        PageVo pageVo = new PageVo();
+        pageVo.setCurPage(pageNumber);
+        pageVo.setPageSize(pageSize);
+        Pager<DistrictPo> pagedData = districtService.getPositions(pageVo);
 
-        ResponseResultVo<DistrictVo> result = new ResponseResultVo<>();
+        ResponseResultVo<List<DistrictPo>> result = new ResponseResultVo<>();
         result.setStatus("success");
-        result.setData(district);
+        result.setData(pagedData.getResults());
+        result.setPageVo(pagedData.getPageVo());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(result);
     }

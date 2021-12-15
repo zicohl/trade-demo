@@ -4,6 +4,8 @@ import com.trade.demo.converter.DistrictMapper;
 import com.trade.demo.dao.DistrictDao;
 import com.trade.demo.po.DistrictPo;
 import com.trade.demo.vo.DistrictVo;
+import com.trade.demo.vo.PageVo;
+import com.trade.demo.vo.Pager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @Slf4j
@@ -35,13 +36,19 @@ public class DistrictService {
         return root;
     }
 
+    public Pager<DistrictPo> getPositions(PageVo pageVo) {
+        Pager<DistrictPo> result = new Pager<>();
+        result.setResults(districtDao.findPagedDistrict(0L, pageVo));
+        result.setPageVo(pageVo);
+        return result;
+    }
+
     private void fillDistrict(DistrictVo district, DistrictVo root) {
         if (district.getParentId().equals(root.getId())) {
             if (root.getChildren() == null) {
                 root.setChildren(new ArrayList<>());
             }
             root.getChildren().add(district);
-            logSql(district);
         } else {
             if (CollectionUtils.isNotEmpty(root.getChildren())) {
                 for (DistrictVo subDistrict : root.getChildren()) {
@@ -49,12 +56,6 @@ public class DistrictService {
                 }
             }
         }
-    }
-
-    private void logSql(DistrictVo district) {
-        log.info("insert into `district` (`id`, `parent_id`, `name`, `name_zh`, `code`, `code_path`, `order_number`) " +
-                "values({},{},'{}','{}','{}','{}',{});", district.getId(),district.getParentId(),district.getName(), district.getNameZh(),
-                district.getCode(),district.getCodePath(),district.getOrderNmuber());
     }
 
 }

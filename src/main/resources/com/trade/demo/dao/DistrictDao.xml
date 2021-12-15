@@ -17,4 +17,12 @@
     <select id="findAllDistrict" resultMap="district">
         select * from district
     </select>
+
+    <select id="findPagedDistrict" resultMap="district">
+        select * from district where parent_id = #{parentId} limit #{pageVo.startIndex}, #{pageVo.pageSize}
+    </select>
+
+    <select id="findPagedDistrictCount" resultType="int">
+        select count(1) from district where parent_id = #{parentId}
+    </select>
 </mapper>
