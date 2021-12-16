@@ -17,9 +17,9 @@ import lombok.ToString;
 @ApiModel(description = "分页信息")
 public class PageVo {
     @ApiModelProperty(required = true, value = "当前页")
-    private Integer curPage;
+    private Integer pageNumber;
 
-    @ApiModelProperty(required = true, value = "分页size")
+    @ApiModelProperty(required = true, value = "分页大小")
     private Integer pageSize ;
 
     private Integer startIndex ;

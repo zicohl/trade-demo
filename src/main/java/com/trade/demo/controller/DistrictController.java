@@ -3,9 +3,7 @@ package com.trade.demo.controller;
 import com.trade.demo.exception.BusinessException;
 import com.trade.demo.exception.ResponseCode;
 import com.trade.demo.po.DistrictPo;
-import com.trade.demo.po.PositionPo;
 import com.trade.demo.service.DistrictService;
-import com.trade.demo.service.PositionService;
 import com.trade.demo.vo.DistrictVo;
 import com.trade.demo.vo.PageVo;
 import com.trade.demo.vo.Pager;
@@ -15,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import liquibase.pro.packaged.A;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -29,9 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +52,7 @@ public class DistrictController {
             produces = {"application/json;charset=UTF-8"},
             method = RequestMethod.GET)
     public ResponseEntity<ResponseResultVo<DistrictVo>> queryDistrictTree(@ApiParam(value = "地区代码") @RequestParam(value = "districtCode", required = false) String districtCode) {
-        DistrictVo district = districtService.getPositionTree(districtCode);
+        DistrictVo district = districtService.getDistrictTree(districtCode);
 
         ResponseResultVo<DistrictVo> result = new ResponseResultVo<>();
         result.setStatus("success");
@@ -79,9 +74,9 @@ public class DistrictController {
             @ApiParam(value = "page number") @RequestParam(value = "pageNumber", required = true) int pageNumber,
             @ApiParam(value = "page size") @RequestParam(value = "pageSize", required = true) int pageSize) {
         PageVo pageVo = new PageVo();
-        pageVo.setCurPage(pageNumber);
+        pageVo.setPageNumber(pageNumber);
         pageVo.setPageSize(pageSize);
-        Pager<DistrictPo> pagedData = districtService.getPositions(pageVo);
+        Pager<DistrictPo> pagedData = districtService.getDistricts(pageVo);
 
         ResponseResultVo<List<DistrictPo>> result = new ResponseResultVo<>();
         result.setStatus("success");

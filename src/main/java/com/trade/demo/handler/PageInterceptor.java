@@ -30,6 +30,8 @@ import java.util.Properties;
 @Component
 public class PageInterceptor implements Interceptor {
     private static final String SUFFIX = "Count";
+    private static final int DEFAULT_PAGESIZE = 10;
+    private static final int DEFAULT_PAGENUMBER = 1;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -53,8 +55,19 @@ public class PageInterceptor implements Interceptor {
             return invocation.proceed();
         }
 
+        if (pageVo.getPageSize() == null) {
+            pageVo.setPageSize(DEFAULT_PAGESIZE);
+        }
+        if (pageVo.getPageNumber() == null) {
+            pageVo.setPageNumber(DEFAULT_PAGENUMBER);
+        }
+        pageVo.setStartIndex((pageVo.getPageNumber() - 1) * pageVo.getPageSize());
+
         int total = getTotal(invocation, metaStatementHandler);
         pageVo.setTotalRow(total);
+        pageVo.setTotalPage(total % pageVo.getPageSize() == 0 ? total / pageVo.getPageSize() : total / pageVo.getPageSize() + 1);
+        pageVo.setStartIndex(pageVo.getStartIndex() + 1);
+        pageVo.setEndIndex(pageVo.getStartIndex() + pageVo.getPageSize() - 1 > total ? total : pageVo.getStartIndex() + pageVo.getPageSize() - 1);
 
         return invocation.proceed();
     }

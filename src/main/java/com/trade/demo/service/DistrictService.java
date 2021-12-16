@@ -23,7 +23,7 @@ public class DistrictService {
     @Autowired
     private DistrictMapper districtMapper;
 
-    public DistrictVo getPositionTree(String code) {
+    public DistrictVo getDistrictTree(String code) {
         List<DistrictPo> list = districtDao.findAllDistrict();
         DistrictVo root = districtMapper.po2Vo(list.get(0));
         for (DistrictPo districtPo : list) {
@@ -36,7 +36,7 @@ public class DistrictService {
         return root;
     }
 
-    public Pager<DistrictPo> getPositions(PageVo pageVo) {
+    public Pager<DistrictPo> getDistricts(PageVo pageVo) {
         Pager<DistrictPo> result = new Pager<>();
         result.setResults(districtDao.findPagedDistrict(0L, pageVo));
         result.setPageVo(pageVo);
