@@ -1,13 +1,12 @@
 package com.trade.demo.service.excel;
 
-import com.trade.demo.bo.ExcelExportBo;
+import com.trade.demo.bo.ExcelExport;
 import com.trade.demo.exception.BusinessException;
 import com.trade.demo.exception.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LocalExcelExportAssistant implements IExcelExportAssistant{
     private static final String SUFFIX = ".excelExport.xml";
 
-    private Map<String, ExcelExportBo> excelExportMap = new ConcurrentHashMap<>();
+    private Map<String, ExcelExport> excelExportMap = new ConcurrentHashMap<>();
 
     @Autowired
     private IExcelExportService excelExportService;
@@ -48,16 +47,16 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant{
         return 0;
     }
 
-    private ExcelExportBo getExcelExportDefine(String excelType) {
-        ExcelExportBo excelExportBo = excelExportMap.get(excelType);
+    private ExcelExport getExcelExportDefine(String excelType) {
+        ExcelExport excelExportBo = excelExportMap.get(excelType);
         if (excelExportBo != null) {
             return excelExportBo;
         }
         return loadExcelExportDefine(excelType);
     }
 
-    private ExcelExportBo loadExcelExportDefine(String excelType) {
-        ExcelExportBo excelExportBo = new ExcelExportBo();
+    private ExcelExport loadExcelExportDefine(String excelType) {
+        ExcelExport excelExportBo = new ExcelExport();
         try {
             ClassPathResource classPathResource = new ClassPathResource(exportTemplate + excelType + SUFFIX);
             InputStream is = classPathResource.getInputStream();
