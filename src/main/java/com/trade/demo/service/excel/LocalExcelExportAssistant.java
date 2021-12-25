@@ -20,6 +20,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 @Slf4j
-public class LocalExcelExportAssistant implements IExcelExportAssistant{
+public class LocalExcelExportAssistant implements IExcelExportAssistant {
     private static final String SUFFIX = ".excelExport.xml";
 
     private Map<String, ExcelExport> excelExportMap = new ConcurrentHashMap<>();
@@ -43,7 +45,7 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant{
     @Override
     public long submitExportTask(String excelType, Map<String, Object> parameters) {
         getExcelExportDefine(excelType);
-        excelExportService.submitExportTask(excelType,parameters);
+        excelExportService.submitExportTask(excelType, parameters);
         return 0;
     }
 
@@ -56,7 +58,7 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant{
     }
 
     private ExcelExport loadExcelExportDefine(String excelType) {
-        ExcelExport excelExportBo = new ExcelExport();
+        ExcelExport excelExport = new ExcelExport();
         try {
             ClassPathResource classPathResource = new ClassPathResource(exportTemplate + excelType + SUFFIX);
             InputStream is = classPathResource.getInputStream();
@@ -66,6 +68,8 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant{
 
             Element root = doc.getDocumentElement();
             NamedNodeMap attrs = root.getAttributes();
+            Node fileName = attrs.getNamedItem("fileName");
+            excelExport.setFileName(parseLocaleName(fileName.getNodeValue()));
             NodeList sheets = root.getChildNodes();
             for (int i = 0; i < sheets.getLength(); i++) {
                 Node sheet = sheets.item(i);
@@ -79,7 +83,18 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant{
             log.error("loadExcelExportDefine", e);
             throw new BusinessException(ResponseCode.EXCEL_EXPORT_ERROR, "load excel definition error");
         }
-        excelExportMap.put(excelType, excelExportBo);
-        return excelExportBo;
+        excelExportMap.put(excelType, excelExport);
+        return excelExport;
+    }
+
+    private Map<Locale, String> parseLocaleName(String value) {
+        Map<Locale, String> localeMap = new HashMap<>();
+        String[] localeValues = value.split(",");
+        for (String localeValue : localeValues) {
+            String[] localeKeyValue = localeValue.split("=");
+            String[] localeNames = localeKeyValue[0].split("_");
+            localeMap.put(localeNames.length == 1 ? new Locale(localeNames[0].toLowerCase(Locale.ROOT)) : new Locale(localeNames[0].toLowerCase(Locale.ROOT), localeNames[1].toLowerCase(Locale.ROOT)), localeKeyValue[1]);
+        }
+        return localeMap;
     }
 }
