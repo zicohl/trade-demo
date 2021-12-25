@@ -2,6 +2,7 @@ package com.trade.demo.controller;
 
 import com.trade.demo.po.DistrictPo;
 import com.trade.demo.service.DistrictService;
+import com.trade.demo.service.excel.IExcelExportAssistant;
 import com.trade.demo.service.excel.IExcelExportService;
 import com.trade.demo.vo.DistrictVo;
 import com.trade.demo.vo.PageVo;
@@ -39,7 +40,7 @@ public class DistrictController {
     private DistrictService districtService;
 
     @Autowired
-    private IExcelExportService excelExportService;
+    private IExcelExportAssistant excelExportAssistant;
 
     @ApiOperation(value = "获取行政区域树", nickname = "queryDistrictTree", notes = "获取行政区域树", tags = {"行政区域服务",})
     @ApiResponses(value = {
@@ -100,7 +101,7 @@ public class DistrictController {
         result.setStatus("success");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("parentId", parentId);
-        result.setData(excelExportService.submitExportTask("district", parameters));
+        result.setData(excelExportAssistant.submitExportTask("district", parameters));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(result);
     }
