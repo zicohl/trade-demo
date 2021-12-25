@@ -29,6 +29,15 @@ quantity INT not null,
 primary key(security_code)
 );
 
+create table `excel_export_task` (
+	`id` int(11) not null,
+	`excel_type` varchar (50) not null,
+	`file_path` varchar (100),
+	`status` TINYINT not null,
+	`create_time` timestamp not null,
+	`update_time` timestamp not null
+);
+
 create table `district` (
 	`id` int(11),
 	`parent_id` int (11),

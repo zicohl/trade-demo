@@ -5,7 +5,8 @@ public enum ResponseCode {
     TRADE_EXIST_ERROR("errorcode.tradeExistError",""),
     TRADE_VERSION_ERROR("errorcode.tradeVersionError",""),
     TRADE_STATUS_ERROR("errorcode.tradeStatusError",""),
-    REPORT_COMPILE_ERROR("errorcode.compileReportTemplateError","");
+    REPORT_COMPILE_ERROR("errorcode.compileReportTemplateError",""),
+    EXCEL_EXPORT_ERROR("errorcode.excelExportError","");
 
     private String code;
     private String message;

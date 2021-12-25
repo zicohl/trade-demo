@@ -36,9 +36,9 @@ public class DistrictService {
         return root;
     }
 
-    public Pager<DistrictPo> getDistricts(PageVo pageVo) {
+    public Pager<DistrictPo> getDistricts(long parentId,PageVo pageVo) {
         Pager<DistrictPo> result = new Pager<>();
-        result.setResults(districtDao.findPagedDistrict(0L, pageVo));
+        result.setResults(districtDao.findPagedDistrict(parentId, pageVo));
         result.setPageVo(pageVo);
         return result;
     }
