@@ -1,6 +1,8 @@
 package com.trade.demo.service.excel;
 
 import com.trade.demo.bo.ExcelExport;
+import com.trade.demo.bo.ExcelExportColumn;
+import com.trade.demo.bo.ExcelExportSheet;
 import com.trade.demo.exception.BusinessException;
 import com.trade.demo.exception.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -44,8 +47,8 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant {
 
     @Override
     public long submitExportTask(String excelType, Map<String, Object> parameters) {
-        getExcelExportDefine(excelType);
-        excelExportService.submitExportTask(excelType, parameters);
+        ExcelExport excelExport = getExcelExportDefine(excelType);
+        excelExportService.submitExportTask(excelExport, parameters);
         return 0;
     }
 
@@ -59,6 +62,7 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant {
 
     private ExcelExport loadExcelExportDefine(String excelType) {
         ExcelExport excelExport = new ExcelExport();
+        excelExport.setExcelType(excelType);
         try {
             ClassPathResource classPathResource = new ClassPathResource(exportTemplate + excelType + SUFFIX);
             InputStream is = classPathResource.getInputStream();
@@ -70,13 +74,38 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant {
             NamedNodeMap attrs = root.getAttributes();
             Node fileName = attrs.getNamedItem("fileName");
             excelExport.setFileName(parseLocaleName(fileName.getNodeValue()));
+
             NodeList sheets = root.getChildNodes();
+            excelExport.setSheets(new ArrayList<>());
+
             for (int i = 0; i < sheets.getLength(); i++) {
                 Node sheet = sheets.item(i);
+
                 if (sheet.getNodeType() == Node.ELEMENT_NODE) {
-                    log.info("{} {}", sheet, sheet.getNodeType());
-                } else {
-                    log.info("{} {}", sheet, sheet.getNodeType());
+                    ExcelExportSheet excelExportSheet = new ExcelExportSheet();
+                    NamedNodeMap sheetAttrs = sheet.getAttributes();
+                    excelExportSheet.setSheetName(parseLocaleName(sheetAttrs.getNamedItem("displayName").getNodeValue()));
+                    excelExportSheet.setBatchSize(Integer.parseInt(sheetAttrs.getNamedItem("batchSize").getNodeValue()));
+                    excelExportSheet.setConsumerBean(sheetAttrs.getNamedItem("consumerBean").getNodeValue());
+                    excelExportSheet.setVoClassName(sheetAttrs.getNamedItem("voClassName").getNodeValue());
+                    excelExportSheet.setColumns(new ArrayList<>());
+
+                    NodeList columns = sheet.getChildNodes();
+                    for (int j = 0; j < columns.getLength(); j++) {
+                        Node column = columns.item(j);
+
+                        if (column.getNodeType() == Node.ELEMENT_NODE) {
+                            ExcelExportColumn excelExportColumn = new ExcelExportColumn();
+                            NamedNodeMap columnAttrs = column.getAttributes();
+                            excelExportColumn.setDisplayName(parseLocaleName(columnAttrs.getNamedItem("displayName").getNodeValue()));
+                            excelExportColumn.setFieldName(columnAttrs.getNamedItem("fieldName").getNodeValue());
+                            excelExportColumn.setFormat(columnAttrs.getNamedItem("format").getNodeValue());
+
+                            excelExportSheet.getColumns().add(excelExportColumn);
+                        }
+                    }
+
+                    excelExport.getSheets().add(excelExportSheet);
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {

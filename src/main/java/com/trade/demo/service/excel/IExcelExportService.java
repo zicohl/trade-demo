@@ -1,5 +1,7 @@
 package com.trade.demo.service.excel;
 
+import com.trade.demo.bo.ExcelExport;
+
 import java.util.Map;
 
 /**
@@ -7,5 +9,5 @@ import java.util.Map;
  * @since 2021/12/19
  */
 public interface IExcelExportService {
-    void submitExportTask(String excelType, Map<String,Object> parameters);
+    void submitExportTask(ExcelExport excelExport, Map<String,Object> parameters);
 }

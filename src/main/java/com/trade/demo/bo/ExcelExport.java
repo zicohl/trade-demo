@@ -16,6 +16,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 public class ExcelExport {
+    private String excelType;
     private Map<Locale, String> fileName;
-    List<ExcelExportSheet> sheets;
+    private List<ExcelExportSheet> sheets;
 }
