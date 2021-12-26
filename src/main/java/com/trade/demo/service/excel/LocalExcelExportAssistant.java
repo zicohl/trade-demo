@@ -46,16 +46,16 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant {
     private String exportTemplate;
 
     @Override
-    public long submitExportTask(String excelType, Map<String, Object> parameters) {
+    public long submitExportTask(String excelType, Locale locale, Map<String, Object> parameters) {
         ExcelExport excelExport = getExcelExportDefine(excelType);
-        excelExportService.submitExportTask(excelExport, parameters);
+        excelExportService.submitExportTask(excelExport, locale, parameters);
         return 0;
     }
 
     private ExcelExport getExcelExportDefine(String excelType) {
-        ExcelExport excelExportBo = excelExportMap.get(excelType);
-        if (excelExportBo != null) {
-            return excelExportBo;
+        ExcelExport excelExport = excelExportMap.get(excelType);
+        if (excelExport != null) {
+            return excelExport;
         }
         return loadExcelExportDefine(excelType);
     }
@@ -99,7 +99,9 @@ public class LocalExcelExportAssistant implements IExcelExportAssistant {
                             NamedNodeMap columnAttrs = column.getAttributes();
                             excelExportColumn.setDisplayName(parseLocaleName(columnAttrs.getNamedItem("displayName").getNodeValue()));
                             excelExportColumn.setFieldName(columnAttrs.getNamedItem("fieldName").getNodeValue());
-                            excelExportColumn.setFormat(columnAttrs.getNamedItem("format").getNodeValue());
+                            if (columnAttrs.getNamedItem("format") != null) {
+                                excelExportColumn.setFormat(columnAttrs.getNamedItem("format").getNodeValue());
+                            }
 
                             excelExportSheet.getColumns().add(excelExportColumn);
                         }

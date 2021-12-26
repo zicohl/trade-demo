@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Validated
@@ -101,7 +102,7 @@ public class DistrictController {
         result.setStatus("success");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("parentId", parentId);
-        result.setData(excelExportAssistant.submitExportTask("district", parameters));
+        result.setData(excelExportAssistant.submitExportTask("district", new Locale("zh", "cn"), parameters));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(result);
     }
