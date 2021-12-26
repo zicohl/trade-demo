@@ -8,6 +8,8 @@ import com.trade.demo.vo.PageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -26,26 +30,46 @@ import java.util.Map;
 @Component
 @Slf4j
 public class LocalExcelExportService implements IExcelExportService {
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Override
     @Async("excelExportExecutor")
     public void submitExportTask(ExcelExport excelExport, Locale locale, Map<String, Object> parameters) {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        log.info("start export {}", excelExport.getExcelType());
-        int index = 0;
-        for (ExcelExportSheet sheet : excelExport.getSheets()) {
-            HSSFSheet bookSheet = workbook.createSheet();
-            workbook.setSheetName(index, sheet.getSheetName().get(locale));
-            index++;
-        }
-
-        FileOutputStream out;
         try {
-            out = new FileOutputStream(excelExport.getFileName().get(locale) + "_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".xlsx");
+
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            log.info("start export {}", excelExport.getExcelType());
+            int index = 0;
+            for (ExcelExportSheet sheet : excelExport.getSheets()) {
+                HSSFSheet bookSheet = workbook.createSheet();
+                workbook.setSheetName(index, sheet.getSheetName().get(locale));
+                PageVo pageVo = new PageVo();
+                pageVo.setPageNumber(1);
+                pageVo.setPageSize(sheet.getBatchSize());
+                pageVo.setTotalRow(1);
+
+                Class voClass = Class.forName(sheet.getVoClassName());
+                IExcelDataProvider dataProvider = (IExcelDataProvider) applicationContext.getBean(sheet.getConsumerBean());
+                List results = dataProvider.getBatchData(pageVo, new HashMap<>());
+                log.info("{}", results);
+                while (results.size() >= pageVo.getPageSize()) {
+                    pageVo.setPageNumber(pageVo.getPageNumber() + 1);
+                    results = dataProvider.getBatchData(pageVo, new HashMap<>());
+                    log.info("{}", results);
+                }
+
+                index++;
+            }
+
+            FileOutputStream out = new FileOutputStream(excelExport.getFileName().get(locale) + "_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".xlsx");
             workbook.write(out);
             out.close();
         } catch (FileNotFoundException e) {
             throw new BusinessException(ResponseCode.EXCEL_EXPORT_ERROR, "export excel error");
         } catch (IOException e) {
+            throw new BusinessException(ResponseCode.EXCEL_EXPORT_ERROR, "export excel error");
+        } catch (ClassNotFoundException e) {
             throw new BusinessException(ResponseCode.EXCEL_EXPORT_ERROR, "export excel error");
         }
     }

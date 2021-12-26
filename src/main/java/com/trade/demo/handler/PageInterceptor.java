@@ -51,9 +51,6 @@ public class PageInterceptor implements Interceptor {
         if (pageVo == null) {
             return invocation.proceed();
         }
-        if (pageVo.getTotalRow() != null && pageVo.getTotalRow() > 0) {
-            return invocation.proceed();
-        }
 
         if (pageVo.getPageSize() == null) {
             pageVo.setPageSize(DEFAULT_PAGESIZE);
@@ -62,6 +59,10 @@ public class PageInterceptor implements Interceptor {
             pageVo.setPageNumber(DEFAULT_PAGENUMBER);
         }
         pageVo.setStartIndex((pageVo.getPageNumber() - 1) * pageVo.getPageSize());
+
+        if (pageVo.getTotalRow() != null && pageVo.getTotalRow() > 0) {
+            return invocation.proceed();
+        }
 
         int total = getTotal(invocation, metaStatementHandler);
         pageVo.setTotalRow(total);
