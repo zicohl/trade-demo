@@ -21,6 +21,6 @@ public class DistrictVo {
     private String nameZh;
     private String code;
     private String codePath;
-    private int orderNmuber;
+    private int orderNumber;
     List<DistrictVo> children;
 }

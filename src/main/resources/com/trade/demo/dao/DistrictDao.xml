@@ -11,7 +11,7 @@
         <result property="nameZh" column="name_zh" />
         <result property="code" column="code" />
         <result property="codePath" column="code_path" />
-        <result property="orderNmuber" column="order_number" />
+        <result property="orderNumber" column="order_number" />
     </resultMap>
 
     <select id="findAllDistrict" resultMap="district">

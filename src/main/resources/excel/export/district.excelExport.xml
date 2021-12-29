@@ -4,5 +4,6 @@
            voClassName="com.trade.demo.po.DistrictPo" consumerBean="IExcelDataProvider.District">
         <column displayName="zh_CN=行政区域名称,en_US=District Name" fieldName="nameZh"/>
         <column displayName="zh_CN=行政区域编码,en_US=District Code" fieldName="code"/>
+        <column displayName="zh_CN=排序,en_US=Sort" fieldName="orderNumber"/>
     </sheet>
 </excel>

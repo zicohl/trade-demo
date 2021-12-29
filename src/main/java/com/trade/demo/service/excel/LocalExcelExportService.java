@@ -8,9 +8,11 @@ import com.trade.demo.exception.ResponseCode;
 import com.trade.demo.vo.PageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
@@ -21,8 +23,10 @@ import java.beans.PropertyDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +55,7 @@ public class LocalExcelExportService implements IExcelExportService {
                 HSSFSheet bookSheet = workbook.createSheet();
                 workbook.setSheetName(index, sheet.getSheetName().get(locale));
                 HSSFRow row = bookSheet.createRow(0);
-                fillColumnName(row, locale, sheet.getColumns());
+                fillColumnName(workbook, row, locale, sheet.getColumns());
 
                 PageVo pageVo = new PageVo();
                 pageVo.setPageNumber(1);
@@ -62,14 +66,14 @@ public class LocalExcelExportService implements IExcelExportService {
                 List results = dataProvider.getBatchData(pageVo, new HashMap<>());
 
                 int dataIndex = 1;
-                fillData(bookSheet, results, dataIndex, sheet);
+                fillData(workbook, bookSheet, results, dataIndex, sheet);
                 dataIndex += results.size();
 
                 while (results.size() >= pageVo.getPageSize()) {
                     pageVo.setPageNumber(pageVo.getPageNumber() + 1);
                     results = dataProvider.getBatchData(pageVo, new HashMap<>());
 
-                    fillData(bookSheet, results, dataIndex, sheet);
+                    fillData(workbook, bookSheet, results, dataIndex, sheet);
                     dataIndex += results.size();
                 }
 
@@ -86,7 +90,7 @@ public class LocalExcelExportService implements IExcelExportService {
         }
     }
 
-    private void fillData(HSSFSheet bookSheet, List results, int dataIndex, ExcelExportSheet sheet) {
+    private void fillData(HSSFWorkbook workbook, HSSFSheet bookSheet, List results, int dataIndex, ExcelExportSheet sheet) {
         try {
             Class voClass = Class.forName(sheet.getVoClassName());
             int index = 0;
@@ -95,9 +99,16 @@ public class LocalExcelExportService implements IExcelExportService {
                 for (int j = 0; j < sheet.getColumns().size(); j++) {
                     ExcelExportColumn column = sheet.getColumns().get(j);
                     PropertyDescriptor pd = new PropertyDescriptor(column.getFieldName(), voClass);
-                    Method wMethod = pd.getReadMethod();
+                    Method method = pd.getReadMethod();
+                    Type type = method.getAnnotatedReturnType().getType();
+                    
                     HSSFCell cell = row.createCell(j);
-                    cell.setCellValue(wMethod.invoke(result).toString());
+                    Object data = method.invoke(result);
+                    if (isTypeOfNumber(type.getTypeName())) {
+                        cell.setCellValue(new Double(data.toString()));
+                    } else {
+                        cell.setCellValue(data.toString());
+                    }
                 }
                 index++;
             }
@@ -106,10 +117,23 @@ public class LocalExcelExportService implements IExcelExportService {
         }
     }
 
-    private void fillColumnName(HSSFRow row, Locale locale, List<ExcelExportColumn> columns) {
+    private boolean isTypeOfNumber(String typeName) {
+        if ("int".equals(typeName)) {
+            return true;
+        } else if ("long".equals(typeName)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void fillColumnName(HSSFWorkbook workbook, HSSFRow row, Locale locale, List<ExcelExportColumn> columns) {
         int index = 0;
+        HSSFCellStyle style = workbook.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
         for (ExcelExportColumn column : columns) {
-            row.createCell(index).setCellValue(column.getDisplayName().get(locale));
+            HSSFCell cell = row.createCell(index);
+            cell.setCellValue(column.getDisplayName().get(locale));
+            cell.setCellStyle(style);
             index++;
         }
     }
