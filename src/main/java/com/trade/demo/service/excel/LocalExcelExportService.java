@@ -23,11 +23,11 @@ import java.beans.PropertyDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +87,8 @@ public class LocalExcelExportService implements IExcelExportService {
             throw new BusinessException(ResponseCode.EXCEL_EXPORT_ERROR, "export excel error");
         } catch (IOException e) {
             throw new BusinessException(ResponseCode.EXCEL_EXPORT_ERROR, "export excel error");
+        } finally {
+            log.info("end export {}", excelExport.getExcelType());
         }
     }
 
@@ -101,13 +103,30 @@ public class LocalExcelExportService implements IExcelExportService {
                     PropertyDescriptor pd = new PropertyDescriptor(column.getFieldName(), voClass);
                     Method method = pd.getReadMethod();
                     Type type = method.getAnnotatedReturnType().getType();
-                    
+
                     HSSFCell cell = row.createCell(j);
                     Object data = method.invoke(result);
-                    if (isTypeOfNumber(type.getTypeName())) {
+                    if (data == null) {
+                        continue;
+                    }
+                    if ("boolean".equals(type.getTypeName()) || data instanceof Boolean) {
+                        cell.setCellValue((Boolean) data);
+                    } else if (isTypeOfNumber(type.getTypeName())) {
                         cell.setCellValue(new Double(data.toString()));
+                    } else if (isObjectOfNumber(data)) {
+                        cell.setCellValue(((Number) data).doubleValue());
+                    } else if (data instanceof Date) {
+                        cell.setCellValue((Date) data);
+                    } else if (data instanceof Calendar) {
+                        cell.setCellValue((Calendar) data);
                     } else {
                         cell.setCellValue(data.toString());
+                    }
+
+                    if (column.getFormat() != null) {
+                        HSSFCellStyle style = workbook.createCellStyle();
+                        style.setDataFormat(workbook.createDataFormat().getFormat(column.getFormat()));
+                        cell.setCellStyle(style);
                     }
                 }
                 index++;
@@ -117,10 +136,23 @@ public class LocalExcelExportService implements IExcelExportService {
         }
     }
 
+    private boolean isObjectOfNumber(Object data) {
+        if (data instanceof Number) {
+            return true;
+        }
+        return false;
+    }
+
     private boolean isTypeOfNumber(String typeName) {
-        if ("int".equals(typeName)) {
+        if ("short".equals(typeName)) {
+            return true;
+        } else if ("int".equals(typeName)) {
             return true;
         } else if ("long".equals(typeName)) {
+            return true;
+        } else if ("float".equals(typeName)) {
+            return true;
+        } else if ("double".equals(typeName)) {
             return true;
         }
         return false;
