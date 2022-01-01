@@ -93,6 +93,14 @@ public class LocalExcelExportService implements IExcelExportService {
     }
 
     private void fillData(HSSFWorkbook workbook, HSSFSheet bookSheet, List results, int dataIndex, ExcelExportSheet sheet) {
+        Map<String, HSSFCellStyle> styleMap = new HashMap<>();
+        for (ExcelExportColumn column : sheet.getColumns()) {
+            if (column.getFormat() != null) {
+                HSSFCellStyle style = workbook.createCellStyle();
+                style.setDataFormat(workbook.createDataFormat().getFormat(column.getFormat()));
+                styleMap.put(column.getFieldName(), style);
+            }
+        }
         try {
             Class voClass = Class.forName(sheet.getVoClassName());
             int index = 0;
@@ -124,9 +132,7 @@ public class LocalExcelExportService implements IExcelExportService {
                     }
 
                     if (column.getFormat() != null) {
-                        HSSFCellStyle style = workbook.createCellStyle();
-                        style.setDataFormat(workbook.createDataFormat().getFormat(column.getFormat()));
-                        cell.setCellStyle(style);
+                        cell.setCellStyle(styleMap.get(column.getFieldName()));
                     }
                 }
                 index++;

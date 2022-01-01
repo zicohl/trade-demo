@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,5 +23,7 @@ public class DistrictVo {
     private String code;
     private String codePath;
     private int orderNumber;
+    private Long createTime;
+    private Date createTimeExport;
     List<DistrictVo> children;
 }

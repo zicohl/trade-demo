@@ -45,7 +45,8 @@ create table `district` (
 	`name_zh` varchar (100),
 	`code` varchar (30),
 	`code_path` varchar (100),
-	`order_number` smallint (5)
+	`order_number` smallint (5),
+	`create_time` timestamp
 );
 
 insert into `district` (`id`, `parent_id`, `name`, `name_zh`, `code`, `code_path`, `order_number`) values(0,null,'China','中华人民共和国','100000','100000',1);
@@ -3261,4 +3262,5 @@ insert into `district` (`id`, `parent_id`, `name`, `name_zh`, `code`, `code_path
 insert into `district` (`id`, `parent_id`, `name`, `name_zh`, `code`, `code_path`, `order_number`) values(33,0,'Hongkong','香港特别行政区','810000','100000.810000',33);
 insert into `district` (`id`, `parent_id`, `name`, `name_zh`, `code`, `code_path`, `order_number`) values(34,0,'Macao','澳门特别行政区','820000','100000.820000',34);
 
+update district set create_time = sysdate;
 commit;

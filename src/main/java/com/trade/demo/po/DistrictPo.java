@@ -20,4 +20,5 @@ public class DistrictPo {
     private String code;
     private String codePath;
     private int orderNumber;
+    private Long createTime;
 }

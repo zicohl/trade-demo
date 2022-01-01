@@ -12,6 +12,7 @@
         <result property="code" column="code" />
         <result property="codePath" column="code_path" />
         <result property="orderNumber" column="order_number" />
+        <result property="createTime" column="create_time" typeHandler="com.trade.demo.handler.TimestampLongHandler"/>
     </resultMap>
 
     <select id="findAllDistrict" resultMap="district">

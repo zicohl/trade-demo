@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <excel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" fileName="zh_CN=行政区域,en_US=District">
     <sheet titleRowIndex="1" dataRowIndex="2" batchSize="10" displayName="zh_CN=行政区域,en_US=District"
-           voClassName="com.trade.demo.po.DistrictPo" consumerBean="IExcelDataProvider.District">
+           voClassName="com.trade.demo.vo.DistrictVo" consumerBean="IExcelDataProvider.District">
         <column displayName="zh_CN=行政区域名称,en_US=District Name" fieldName="nameZh"/>
         <column displayName="zh_CN=行政区域编码,en_US=District Code" fieldName="code"/>
         <column displayName="zh_CN=排序,en_US=Sort" fieldName="orderNumber"/>
+        <column displayName="zh_CN=创建日期,en_US=Create Time" fieldName="createTimeExport" format="yyyy-MM-dd HH:mm:ss"/>
     </sheet>
 </excel>
