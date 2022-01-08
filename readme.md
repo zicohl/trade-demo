@@ -6,3 +6,4 @@
 * h2 console http://localhost:8080/trade/h2-console 连接jdbc:h2:mem:trade，用户名sa，密码sa。
 * 集成自定义mybatis分页插件
 * Excel异步分页填充导出框架
+* 注解方式权限控制
