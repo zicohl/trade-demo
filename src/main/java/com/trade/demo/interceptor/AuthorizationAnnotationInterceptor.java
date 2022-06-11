@@ -46,14 +46,14 @@ public class AuthorizationAnnotationInterceptor implements AsyncHandlerIntercept
                         //boolean isEquals = tokenRole.containsAll(requireRole);
 
                         //if (!isEquals) {
-                        response.setStatus(403);
-                        response.getWriter().write("access forbidden");
-                        return false;
+                        //response.setStatus(403);
+                        //response.getWriter().write("access forbidden");
+                        //return false;
                         // }
                     }
 
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
 
             }
         }
