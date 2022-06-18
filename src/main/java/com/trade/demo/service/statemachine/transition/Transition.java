@@ -4,7 +4,6 @@ import com.trade.demo.service.statemachine.event.StateEvent;
 import com.trade.demo.service.statemachine.state.IState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
