@@ -73,4 +73,8 @@ public abstract class CompositeState extends StateMachine implements IState {
         return null;
     }
 
+    @Override
+    public void leave(Transition transition) {
+
+    }
 }

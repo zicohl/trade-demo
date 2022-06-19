@@ -7,7 +7,7 @@ import com.trade.demo.service.statemachine.event.IEventType;
  * @since 2022/6/12
  */
 public enum EventType implements IEventType {
-    PLACE_ORDER, COMPLETE;
+    PLACE_ORDER, PAY_PARTIAL, PAY_ALL;
 
     @Override
     public String getName() {

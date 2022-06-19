@@ -7,7 +7,7 @@ import com.trade.demo.service.statemachine.transition.ITransitionType;
  * @since 2022/6/12
  */
 public enum TransitionType implements ITransitionType {
-    ORDER_COMPLETE, FINISH;
+    ORDER_COMPLETE, PAY_PARTIAL, FINISH;
 
     @Override
     public String getName() {

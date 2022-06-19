@@ -1,6 +1,7 @@
 package com.trade.demo.controller;
 
 import com.trade.demo.service.order.OrderService;
+import com.trade.demo.vo.OrderOperationVo;
 import com.trade.demo.vo.ResponseResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +48,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @ApiOperation(value = "完成订单", nickname = "complete order", notes = "完成订单", tags = {"订单服务",})
+    @ApiOperation(value = "处理订单", nickname = "complete order", notes = "处理订单", tags = {"订单服务",})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK", response = ResponseResultVo.class),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -57,12 +58,12 @@ public class OrderController {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PUT)
-    public ResponseEntity<ResponseResultVo<String>> completeOrder(@ApiParam(value = "订单号") @Valid @RequestBody String orderNum) {
-        orderService.completeOrder(orderNum);
+    public ResponseEntity<ResponseResultVo<String>> completeOrder(@ApiParam(value = "订单号") @Valid @RequestBody OrderOperationVo orderOperation) {
+        orderService.processOrder(orderOperation.getOrderNum(), orderOperation.getAction());
 
         ResponseResultVo<String> result = new ResponseResultVo<>();
         result.setStatus("success");
-        result.setData(orderNum);
+        result.setData(orderOperation.getOrderNum());
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

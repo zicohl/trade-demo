@@ -16,7 +16,7 @@ public class OrderService {
         stateMachineService.startOrderState(orderNum);
     }
 
-    public void completeOrder(String orderNum) {
-        stateMachineService.processOrderEvent(orderNum, EventType.COMPLETE, orderNum);
+    public void processOrder(String orderNum, String action) {
+        stateMachineService.processOrderEvent(orderNum, EventType.valueOf(action), orderNum);
     }
 }

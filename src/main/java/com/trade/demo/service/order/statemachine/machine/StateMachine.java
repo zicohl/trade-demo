@@ -3,6 +3,7 @@ package com.trade.demo.service.order.statemachine.machine;
 import com.trade.demo.service.order.statemachine.state.CompleteState;
 import com.trade.demo.service.order.statemachine.state.FinalState;
 import com.trade.demo.service.order.statemachine.state.InitState;
+import com.trade.demo.service.order.statemachine.state.payment.PaymentState;
 import com.trade.demo.service.statemachine.state.IState;
 
 /**
@@ -23,6 +24,8 @@ public class StateMachine extends com.trade.demo.service.statemachine.StateMachi
     @Override
     protected void config() {
         addTransition(InitState.class, TransitionType.ORDER_COMPLETE, CompleteState.class);
+        addTransition(InitState.class, TransitionType.PAY_PARTIAL, PaymentState.class);
+        addTransition(PaymentState.class, TransitionType.ORDER_COMPLETE, CompleteState.class);
         addTransition(CompleteState.class, TransitionType.FINISH, FinalState.class);
     }
 }
